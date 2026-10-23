@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TaskDefinition",
+  "type": "object",
+  "required": [
+    "task_id",
+    "domain",
+    "session_type",
+    "prompt",
+    "evaluation"
+  ],
+  "properties": {
+    "task_id": { "type": "string" },
+    "version": { "type": "string" },
+    "title": { "type": "string" },
+    "domain": {
+      "type": "string",
+      "enum": ["coding", "information_retrieval", "diagnostic_smoke"]
+    },
+    "session_type": {
+      "type": "string",
+      "enum": ["memory_building", "held_out_evaluation", "smoke_test"]
+    },
+    "stream_id": {
+      "type": "string",
+      "description": "Identifier for multi-session transfer sequence (e.g. session 2 transfers from session 1)"
+    },
+    "session_index": {
+      "type": "integer",
+      "description": "1-based order within the stream"
+    },
+    "prompt": {
+      "type": "string",
+      "description": "User message provided to the agent"
+    },
+    "setup": {
+      "type": "object",
+      "properties": {
+        "files": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "commands": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["file_content", "script_execution", "regex_match", "json_field"]
+        },
+        "target_file": { "type": "string" },
+        "expected_value": {},
+        "verification_command": { "type": "string" },
+        "timeout_seconds": { "type": "number" }
+      }
+    },
+    "stale_conflict_metadata": {
+      "type": "object",
+      "properties": {
+        "is_stale_probe": { "type": "boolean" },
+        "is_conflict_probe": { "type": "boolean" },
+        "prior_version_value": { "type": "string" },
+        "updated_value": { "type": "string" }
+      }
+    },
+    "hidden_evaluation_data": {
+      "type": "object",
+      "description": "Data preserved exclusively for post-run evaluation; must NEVER be exposed in agent context or memory store"
+    }
+  }
+}
